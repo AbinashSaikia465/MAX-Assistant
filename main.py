@@ -83,7 +83,7 @@ class MAXAssistant:
     def speak(self, text):
         if not text: return
         
-        # Identity reinforcement for Max (avoiding duplicates)
+        # Identity reinforcement for Max
         clean_text = text.strip().lower().rstrip(".,!?;")
         if not clean_text.startswith("sir") and not clean_text.endswith("sir"):
             text = f"{text}, Sir."
@@ -98,10 +98,10 @@ class MAXAssistant:
             if hasattr(self, 'recorder') and self.recorder.is_recording:
                 self.recorder.stop()
             
-            sentences = [s.strip() for s in vocal_text.split('.') if s.strip()]
-            for sentence in sentences:
-                self.speaker.Speak(sentence)
-                time.sleep(0.4)
+            # Direct vocalization without manual splitting to ensure fluid, human-like cadence
+            # Flag 1 (SVSFlagsAsync) can be used if we want non-blocking, but for now 
+            # we'll keep it synchronous for immediate feedback.
+            self.speaker.Speak(vocal_text)
                 
         except Exception as e:
             print(f"Vocal Synthesis Error: {e}, Sir.")
@@ -177,28 +177,33 @@ class MAXAssistant:
         text = self.clean_command(text)
         if not text: return None
 
-        # --- Priority 1: Browser Media Control (Intercepts YouTube/Chrome commands) ---
-        media_keywords = ["pause", "resume", "skip", "forward", "backward", "rewind", "fullscreen", "full screen", "maximize", "mute", "unmute"]
-        is_media_control = any(w in text for w in media_keywords)
-        is_browser_volume = "volume" in text and any(b in raw_text for b in ["youtube", "chrome", "browser"])
-        is_browser_play = text.strip() == "play" or (text.startswith("play") and any(b in raw_text for b in ["youtube", "chrome"]))
-
-        if is_media_control or is_browser_volume or is_browser_play:
-            # Avoid intercepting "play [song]" unless youtube/chrome is specifically mentioned
-            if not (text.startswith("play ") and len(text.split()) > 2 and "youtube" not in raw_text):
-                res = self.control_browser_media(text)
-                if "I could not find" not in res: return res
-
-        # --- Priority 2: System Status ---
-        if any(w in text for w in ["system status", "cpu", "ram", "battery", "performance"]): return self.get_system_stats()
-        
-        # --- Priority 3: Web navigation on Chrome ---
-        if "on chrome" in text or "using chrome" in text:
+        # --- Priority 1: Unified 'Open' Gate (Local -> Web) ---
+        if "open" in text or "on chrome" in text or "using chrome" in text:
             target = text.replace("open", "").replace("on chrome", "").replace("using chrome", "").strip()
             if target:
+                # First, check local disk
+                try:
+                    installed_apps = [a.lower() for a in give_appnames()]
+                    matches = difflib.get_close_matches(target.lower(), installed_apps, n=1, cutoff=0.6)
+                    if matches:
+                        self.pending_action = {"type": "app_open", "target": matches[0]}
+                        return f"I have located {matches[0]} on your system, Sir. Should I open it?"
+                except Exception: pass
+                
+                # If not local, pivot to web
                 self.pending_action = {"type": "web_open", "query": target}
-                return f"I have located {target} on the web. Should I open it?"
+                return f"I could not find {target} locally, Sir. Shall I search for it on the web?"
 
+        # --- Priority 2: Browser Media Control ---
+        media_keywords = ["pause", "resume", "skip", "forward", "backward", "rewind", "fullscreen", "full screen", "maximize", "mute", "unmute"]
+        if any(w in text for w in media_keywords) or ("volume" in text and any(b in raw_text for b in ["youtube", "chrome"])):
+            res = self.control_browser_media(text)
+            if "I could not find" not in res: return res
+
+        # --- Priority 3: System Status ---
+        if any(w in text for w in ["system status", "performance", "cpu usage", "battery level"]): 
+            return self.get_system_stats()
+        
         # --- Priority 4: Closing actions ---
         if any(w in text for w in ["close", "exit", "terminate", "kill"]):
             if "window" in text and "tab" not in text and not any(a in text for a in ["chrome", "browser", "youtube"]): return self.close_active_window()
@@ -211,49 +216,31 @@ class MAXAssistant:
         if "youtube" in text or "play" in text:
             if text == "open youtube" or text == "youtube":
                 webbrowser.open("https://www.youtube.com"); return "Opening YouTube"
-            
-            live_streams = {
-                "lofi": "https://www.youtube.com/watch?v=jfKfPfyJRdk", 
-                "jazz": "https://www.youtube.com/watch?v=5yx6BWbL1E4", 
-                "synthwave": "https://www.youtube.com/watch?v=4xDzrJKXOOY", 
-                "classical": "https://www.youtube.com/watch?v=mIYzp5rcTvU"
-            }
+            live_streams = {"lofi": "https://www.youtube.com/watch?v=jfKfPfyJRdk", "jazz": "https://www.youtube.com/watch?v=5yx6BWbL1E4"}
             if "music" in text and not any(word in text for word in ["search", "find", "google"]):
-                selection = "lofi"
-                for genre in live_streams:
-                    if genre in text: selection = genre; break
-                if "random" in text or "some" in text: selection = random.choice(list(live_streams.keys()))
-                webbrowser.open(live_streams[selection]); return f"Initiating {selection} stream for you, Sir."
-            
+                selection = next((g for g in live_streams if g in text), "lofi")
+                webbrowser.open(live_streams[selection]); return f"Initiating {selection} stream, Sir."
             query = text.replace("youtube", "").replace("play", "").replace("on", "").replace("search", "").replace("open", "").strip()
             if query: return self.youtube_play(query)
-            else: webbrowser.open("https://www.youtube.com"); return "Opening YouTube"
 
         # --- Priority 6: Web Search ---
         elif "google" in text or "search" in text:
             query = text.replace("google", "").replace("search", "").replace("for", "").strip()
             if query: webbrowser.open(f"https://www.google.com/search?q={query}"); return f"Searching the web for {query}"
 
-        # --- Priority 7: Brightness and Volume (System) ---
+        # --- Priority 7: Brightness and Volume ---
         nums = [int(n) for n in re.findall(r'\d+', text)]
         if "brightness" in text:
             if nums: return self.set_brightness(nums[0])
-            elif any(w in text for w in ["increase", "up", "more", "higher"]): return self.adjust_brightness(delta=20)
-            elif any(w in text for w in ["decrease", "down", "less", "lower"]): return self.adjust_brightness(delta=-20)
-        
+            elif "up" in text: return self.adjust_brightness(20)
+            elif "down" in text: return self.adjust_brightness(-20)
         elif any(w in text for w in ["volume", "sound", "mute", "unmute"]):
             if "mute" in text and "unmute" not in text: return self.set_volume(0)
             elif "unmute" in text: return self.set_volume(20)
             elif nums: return self.set_volume(nums[0])
-            elif any(w in text for w in ["increase", "up", "more", "higher"]): return self.adjust_volume(delta=0.1)
-            elif any(w in text for w in ["decrease", "down", "less", "lower"]): return self.adjust_volume(delta=-0.1)
+            elif "up" in text: return self.adjust_volume(0.1)
+            elif "down" in text: return self.adjust_volume(-0.1)
             
-        # --- Priority 8: App opening ---
-        elif "open" in text: return self.open_app(text.replace("open", "").strip())
-        
-        # --- Priority 9: Time ---
-        elif "time" in text: return f"The current time is {time.strftime('%I:%M %p')}"
-        
         return None
 
     def close_active_window(self):
@@ -423,31 +410,47 @@ class MAXAssistant:
                     command = self.capture_command()
                     if command and len(command) > 1:
                         print(f"Command Captured: '{command}'")
+                        
+                        # --- Confirmation Logic (High Priority) ---
                         if self.pending_action:
-                            if any(word in command.lower() for word in ["yes", "yeah", "sure", "do it", "confirm", "open it"]):
+                            affirmations = ["yes", "yeah", "sure", "do it", "confirm", "open it", "go ahead", "proceed", "okay", "ok", "yep", "ahead"]
+                            if any(word in command.lower() for word in affirmations):
                                 if self.pending_action["type"] == "web_open":
                                     query = self.pending_action["query"].lower().replace(" ", "")
                                     url = f"https://www.{query}.com" if "." not in query else f"https://{query}"
-                                    webbrowser.open(url); self.speak(f"Navigating directly to {query}")
+                                    webbrowser.open(url); self.speak(f"Very well, Sir. Navigating directly to {query}")
                                 self.pending_action = None; continue
                             else:
-                                self.speak("Action cancelled"); self.pending_action = None; continue
+                                self.speak("Understood, Sir. Action cancelled."); self.pending_action = None; continue
+
+                        # --- Command Handling ---
                         action_result = self.handle_local_commands(command)
+                        
+                        # If an action is pending (like web open), we MUST stop and ask for confirmation directly
+                        if self.pending_action:
+                            self.speak(action_result)
+                            continue
+
+                        # Standard cognitive processing for everything else
                         thought_prompt = command
                         if action_result:
                             thought_prompt = f"System Update: I have successfully performed this action: {action_result}. Now respond to the user command: {command}"
+                        
                         emotive_response = self.think(thought_prompt)
+                        
                         standby_triggers = ["go to sleep", "stop listening", "rest", "stand by", "thank you", "thanks"]
                         if any(word in command.lower() for word in standby_triggers):
                             self.active_session = False
                             self.speak(emotive_response if emotive_response else "As you wish, Sir. Returning to standby")
                             continue
+                            
                         if emotive_response and "unstable" not in emotive_response:
                             self.speak(emotive_response)
                         elif action_result:
                             self.speak(action_result)
                         else:
                             self.speak("I'm afraid I didn't quite catch that, Sir.")
+                            
                         if emotive_response:
                             self.memory.append({"role": "user", "content": command})
                             self.memory.append({"role": "assistant", "content": emotive_response})
