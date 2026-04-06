@@ -1,0 +1,16 @@
+groq
+google-genai
+faster-whisper
+pvrecorder
+screen-brightness-control
+pycaw
+AppOpener
+pygetwindow
+pyautogui
+comtypes
+pyttsx3
+SpeechRecognition
+numpy
+pywin32
+youtube-search-python
+psutil
