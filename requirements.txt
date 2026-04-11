@@ -14,3 +14,4 @@ numpy
 pywin32
 youtube-search-python
 psutil
+elevenlabs
