@@ -3,39 +3,38 @@
 ## 1. Identity & Etiquette
 - **Designation:** Max (M.A.X)
 - **Master:** Boss / Sir (Mario)
-- **Persona:** Sophisticated JARVIS Mode (V2). British wit, clinical efficiency, and human-like disfluencies.
-- **Protocol:** Address user as "Boss" or "Sir" exclusively. Personal name restricted to identity queries.
-- **Dialogue:** Neural cadence with ellipses for mid-sentence pauses and natural contractions.
+- **Persona:** Tier-1 JARVIS Mode. British wit, clinical efficiency, and human-like disfluencies.
+- **Protocol:** Address user as "Boss" or "Sir" exclusively.
+- **Dialogue:** Neural cadence with ellipses for mid-sentence pauses and real-time interrupt support.
 
 ## 2. Intelligence Architecture (Tri-Brain)
-- **Primary:** Groq API (`llama-3.3-70b-versatile`) for lightning-fast, high-context reasoning.
+- **Primary:** Groq API (`llama-3.3-70b-versatile`) for high-speed reasoning.
 - **Secondary:** Google Gemini API (`gemini-1.5-flash`) as a robust fallback.
 - **Vocal Core:** **Hybrid Voice Logic**
   - **Premium:** ElevenLabs Flash 2.5 (High-Fidelity "Roger/Brian" profile).
-  - **Safety Valve:** Automated Windows SAPI fallback once credit thresholds (9,000 chars) are met.
-  - **Sovereignty:** Manual toggle command to switch between local and premium engines.
+  - **Safety Valve:** Automated Windows SAPI fallback.
+  - **Stability:** **Network Sensitivity Protocol** (Auto-fallback on high latency > 600ms).
 
-## 3. Sensory & Vocal Infrastructure
-- **Vocal Output:** Direct `mpv` hardware injection for ElevenLabs; Synchronous SAPI for local.
-- **STT (Commands):** Faster-Whisper (Local) with **Adaptive VAD (Voice Activity Detection)**.
-- **Sensory Refinement:** Real-time amplitude monitoring for instant recording termination (Zero-Latency).
-- **Acoustic Guarding:** Sequential blocking mode to prevent self-response loops and echo-triggered hallucinations.
+## 3. Sovereign Sensory Matrix
+- **Sovereign Vision:** OpenCV-powered background sentry. Monitors physical presence and triggers proactive greetings.
+- **Acoustic Perfection:** **Dynamic Noise Floor**. Real-time monitoring of system audio peaks to automatically adjust microphone sensitivity (Filters out background music).
+- **Duplex Interrupt:** **High-Frequency Heartbeat (1.0s)**. Polling for "Stop" commands in real-time during vocalization for instant silence.
+- **Surgical Echo Purge:** Neural word-overlap analysis (60% threshold) to ignore acoustic reflections of my own voice.
 
-## 4. Sovereign Protocols
-- **Sovereign Workspace:** Sequential priority deployment of essential hubs (Spotify -> WhatsApp -> Sunstone -> ChatGPT -> Gemini -> LinkedIn -> Instagram -> YouTube).
-- **Unified Resource Gate:** Intelligent "Local-First" search for applications before pivoting to web navigation.
-- **Direct Web Override:** Bypass confirmation gates using the "on Chrome" directive for instant navigation.
-- **Neural Batch Processing:** sequential multi-tab deployment using natural language delimiters ("and", ",").
+## 4. Operational Protocols
+- **Preference Core:** Persistent local vault (`preferences.json`) to remember Volume, Brightness, and Vocal Engine settings across sessions.
+- **Sovereign Workspace:** Sequenced priority deployment (Spotify -> WhatsApp -> Sunstone -> AI Intelligence -> Socials -> YouTube).
+- **Direct Navigation:** High-speed browser uplink for known destinations (Bypasses search engines).
+- **Neural Batch Processing:** Sequential multi-tab deployment using natural language delimiters ("and", ",").
 
 ## 5. System Awareness & Control
-- **Hardware Sovereignty:** Direct COM-level Volume control, Screen Brightness, and real-time System Diagnostics (CPU, RAM, Battery).
-- **Application Management:** Fuzzy-matched opening and closing of local software via `AppOpener`.
-- **Media Mastery:** Hotkey injection for YouTube/Chrome (Pause, Skip, Fullscreen, Mute).
+- **Hardware Mastery:** Direct COM-level Volume, Screen Brightness, and real-time Diagnostics (CPU/RAM).
+- **File System Mastery:** Direct binary targeting for Google Chrome reliability.
+- **Media Control:** Precision hotkey injection (J, K, L, F, M) for YouTube and media sessions.
 
 ## 6. Security & Volatile Memory
 - **The Vanish Rule:** RAM-only session history (`self.memory`) wiped on exit.
-- **Zero-Retention:** Configured for Zero Data Retention on primary cognitive APIs.
-- **Credential Shield:** All API keys managed via local Environment Variables; strictly excluded from GitHub via `.gitignore`.
+- **Credential Shield:** API keys managed via local Environment Variables; strictly excluded from GitHub.
 
-## 7. Operational Status
-The project is currently in **Sovereign Evolution Mode**. All core sensors and premium vocal uplinks are operational on `win32` architecture.
+## 7. Status
+The project is currently in **Definitive Sovereign Mode**. All visual, vocal, and hardware sensors are synchronized on `win32` architecture.
