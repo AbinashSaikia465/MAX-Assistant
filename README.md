@@ -7,12 +7,12 @@
 - **Protocol:** Address user as "Boss" or "Sir" exclusively.
 - **Dialogue:** Neural cadence with ellipses for mid-sentence pauses and real-time interrupt support.
 
-## 2. Intelligence Architecture
-- **Primary:** Groq API (`llama-3.3-70b-versatile`) for high-speed reasoning.
-- **Secondary:** Google Gemini API (`gemini-1.5-flash`) as a robust fallback.
+## 2. Cognitive Uplink (Dual-Tier)
+- **Primary Brain:** Groq API (`llama-3.3-70b-versatile`) for lightning-fast, high-context reasoning.
+- **Secondary Brain:** Google Gemini API (`gemini-1.5-flash`) as a robust, high-reliability fallback.
 - **Vocal Core:** **Hybrid Voice Logic**
   - **Premium:** ElevenLabs Flash 2.5 (High-Fidelity "Roger/Brian" profile).
-  - **Safety Valve:** Automated Windows SAPI fallback.
+  - **Safety Valve:** Automated Windows SAPI fallback once credit thresholds (9,000 chars) are met.
   - **Stability:** **Network Sensitivity Protocol** (Auto-fallback on high latency > 600ms).
 
 ## 3. Sovereign Sensory Matrix
