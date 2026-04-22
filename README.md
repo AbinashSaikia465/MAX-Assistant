@@ -7,7 +7,7 @@
 - **Protocol:** Address user as "Boss" or "Sir" exclusively.
 - **Dialogue:** Neural cadence with ellipses for mid-sentence pauses and real-time interrupt support.
 
-## 2. Intelligence Architecture (Tri-Brain)
+## 2. Intelligence Architecture
 - **Primary:** Groq API (`llama-3.3-70b-versatile`) for high-speed reasoning.
 - **Secondary:** Google Gemini API (`gemini-1.5-flash`) as a robust fallback.
 - **Vocal Core:** **Hybrid Voice Logic**
